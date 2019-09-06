@@ -7,12 +7,6 @@ function [] = runGraphsTime(data,names,grouping)
 
 [timeGraphs,graphss,data,mod_data,hh,lb,dispdata] = InitializeGraphs(data,names,grouping);
 
-%b = zoom;
-%b.Motion = 'horizontal';
-% b.Enable = 'on';
-%h = pan;
-%h.Motion = 'horizontal';
-% h.Enable = 'on';
 linkaxes(graphss, 'x');
 
 set(timeGraphs, 'WindowButtonDownFcn', @startDragFcn);
@@ -23,6 +17,7 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
     'Position', [.4 .00 .1 .02]);
 
     function startDragFcn(varargin)
+        % Make the horizontal bar track where the mouse pointer goes
         set(timeGraphs, 'WindowButtonMotionFcn', @draggingFcn)
     end
     function draggingFcn(varargin)
@@ -32,7 +27,7 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
         closestTime = abs(tt - pt(1));
         [timeInt, timeRow] = min(closestTime);
         idcs_to_disp = grouping(grouping~=0);
-        idcs_to_disp = reshape(idcs_to_disp,1,numel(idcs_to_disp));
+        idcs_to_disp = idcs_to_disp(:);
         didx = 1;
         for idx = idcs_to_disp
             label = strcat(names{idx},': ',num2str(data(timeRow,idx)));
@@ -52,6 +47,7 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
     end
 
     function stopDragFcn(varargin)
+        % Once the mouse button gets released, stop following the pointer.
         set(timeGraphs, 'WindowButtonMotionFcn', '')
     end
 
@@ -62,9 +58,11 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
             % get the axes' x- and y-limits
             xlim = get(gca, 'xlim');
             % get the current camera position, and save the [z]-value
-            cam_pos_Z = get(gca, 'cameraposition');  cam_pos_Z = cam_pos_Z(3);
+            cam_pos_Z = get(gca, 'cameraposition');
+            cam_pos_Z = cam_pos_Z(3);
             % get the current point
-            old_position = get(gca, 'CurrentPoint'); old_position(1,3) = cam_pos_Z;
+            old_position = get(gca, 'CurrentPoint');
+            old_position(1,3) = cam_pos_Z;
             % calculate zoom factor
             zoomfactor = max(0.01,1 - scrolls/30);
             % adjust camera position
@@ -72,19 +70,13 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
                 'cameraposition', old_position(1, 1:3));
             % adjust the camera view angle (equal to zooming in)
             camzoom(zoomfactor);
-            if(abs(scrolls)>3)
-                x = 1;
-            end
             
             % zooming with the camera has the side-effect of
             % NOT adjusting the axes limits. We have to correct for this:
             x_lim1 = (old_position(1,1) - min(xlim))/zoomfactor;
             x_lim2 = (max(xlim) - old_position(1,1))/zoomfactor;
-            xlim   = [old_position(1,1) - x_lim1, old_position(1,1) + x_lim2];
-            %         y_lim1 = (old_position(1,2) - min(ylim))/zoomfactor;
-            %         y_lim2 = (max(ylim) - old_position(1,2))/zoomfactor;
-            %         ylim   = [old_position(1,2) - y_lim1, old_position(1,2) + y_lim2];
-            set(gca, 'xlim', xlim) %, set(gca, 'ylim', ylim)
+            xlim   = [old_position(1,1)-x_lim1,old_position(1,1)+x_lim2];
+            set(gca, 'xlim', xlim) 
             
             % set new camera position
             new_position = get(gca, 'CurrentPoint');
@@ -139,12 +131,16 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
                 'Style', 'text',...
                 'Units','normalized',...
                 'Position', [.1 boxPos(uiOffset) .1 .05]);
-        end
-        
-        % Rebuild Grouping
+        end                
     end
-    function [timeGraphs,graphss,data,mod_data,hh,lb,disp_data] = InitializeGraphs(data,names,grouping)
-        timeGraphs = figure('units','normalized','outerposition',[0 0 1 1]);
+
+    function [timeGraphs,graphss,data,mod_data,hh,lb,disp_data] = InitializeGraphs(...
+            data,...
+            names,...
+            grouping)
+        timeGraphs = figure(...
+            'units','normalized',...
+            'outerposition',[0 0 1 1]);
         set(timeGraphs, 'menubar', 'none');
         
         [plotsPer,nPlots] = size(grouping);
@@ -163,7 +159,9 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
         
         for gg = grouping
             ii = ii + 1;
-            graphss(ii) = subplot('Position', [.02, .98-ii*pHeight, .7, pHeight]);
+            graphss(ii) = subplot(...
+                'Position',...
+                [.02, .98-ii*pHeight, .7, pHeight]);
             idcs = gg';
             idcs = idcs(idcs ~= 0);
             modSet = mod_data(:,idcs);
@@ -174,8 +172,12 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
             ax = gca;
             set(ax,"GridAlpha", 0.4);
             set(ax,"MinorGridAlpha",0.5);
-            hh(ii) = line([1,1],[0,max(max(modSet))],'color',[0,.75,0],'LineWidth',2);
-            uic = uicontrol(timeGraphs,'Style','listbox',...
+            hh(ii) = line(...
+                [1,1],[0,max(max(modSet))],...
+                'color',[0,.75,0],...
+                'LineWidth',2);
+            uic = uicontrol(timeGraphs,...
+                'Style','listbox',...
                 'Units', 'normalized',...
                 'Position',[0.75,0.98-ii*pHeight,0.2,pHeight],...
                 'string',names,...
