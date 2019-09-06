@@ -22,23 +22,6 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
     'Units', 'normalized',...
     'Position', [.4 .00 .1 .02]);
 
-% plusButton = uicontrol(timeGraphs,...
-%     'Style', 'pushbutton',...
-%     'Units', 'normalized',...
-%     'Position', [0.97 0.6 0.03 0.02],...
-%     'String', '+');
-% 
-% minusButton = uicontrol(timeGraphs,...
-%     'Style', 'pushbutton',...
-%     'Units', 'normalized',...
-%     'Position', [0.97 0.4 0.03 0.02],...
-%     'String', '-');
-% 
-% happyface = 3;
-
-
-    
-
     function startDragFcn(varargin)
         set(timeGraphs, 'WindowButtonMotionFcn', @draggingFcn)
     end
@@ -75,7 +58,7 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
     function doScroll(varargin)
         % get the amount of scolls
         if(timeGraphs.CurrentPoint(1)<0.7)
-            scrolls = varargin{2}.VerticalScrollCount;            
+            scrolls = varargin{2}.VerticalScrollCount;
             % get the axes' x- and y-limits
             xlim = get(gca, 'xlim');
             % get the current camera position, and save the [z]-value
@@ -92,7 +75,7 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
             if(abs(scrolls)>3)
                 x = 1;
             end
-
+            
             % zooming with the camera has the side-effect of
             % NOT adjusting the axes limits. We have to correct for this:
             x_lim1 = (old_position(1,1) - min(xlim))/zoomfactor;
@@ -102,7 +85,7 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
             %         y_lim2 = (max(ylim) - old_position(1,2))/zoomfactor;
             %         ylim   = [old_position(1,2) - y_lim1, old_position(1,2) + y_lim2];
             set(gca, 'xlim', xlim) %, set(gca, 'ylim', ylim)
-
+            
             % set new camera position
             new_position = get(gca, 'CurrentPoint');
             old_camera_target =  get(gca, 'CameraTarget');
@@ -121,6 +104,45 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
     end % scroll_zoom
 
 
+
+
+    function listBoxSelFcn(varargin)
+        ibox = str2num(varargin{1}.Tag);
+        idcs = lb(ibox).Value.';
+        if(length(idcs)>size(grouping,1))
+            grouping = [grouping;zeros(length(idcs)-size(grouping,1),size(grouping,2))];
+        end
+        grouping(:,ibox)=0;
+        grouping(1:length(idcs),ibox) = idcs;
+        subplot(graphss(ibox));
+        modSet = mod_data(:,idcs);
+        plot(data(:,1)/1e7, modSet);
+        legend(names(idcs));
+        grid on;
+        grid minor;
+        ax = gca;
+        ax.GridAlpha = 0.4;
+        ax.MinorGridAlpha = 0.5;
+        hh(ibox) = line([1,1],[0,max(max(modSet))],'color',[0,.75,0],'LineWidth',2);
+        
+        [plotsPer,nPlots] = size(grouping);
+        nBoxes = sum(sum(grouping ~= 0));
+        boxPos = (linspace(.1,.9,nBoxes));
+        boxPos = boxPos(end:-1:1);
+        for jj = length(dispdata):-1:1
+            delete(dispdata(jj))
+        end
+        uiOffset = 0;
+        for idx = grouping(grouping~=0).'
+            uiOffset = uiOffset+1;
+            dispdata(uiOffset) = uicontrol(timeGraphs,...
+                'Style', 'text',...
+                'Units','normalized',...
+                'Position', [.1 boxPos(uiOffset) .1 .05]);
+        end
+        
+        % Rebuild Grouping
+    end
     function [timeGraphs,graphss,data,mod_data,hh,lb,disp_data] = InitializeGraphs(data,names,grouping)
         timeGraphs = figure('units','normalized','outerposition',[0 0 1 1]);
         set(timeGraphs, 'menubar', 'none');
@@ -135,7 +157,6 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
         TIME_SCALE = 1E7;
         tt = data(:,1)/TIME_SCALE;
         ii = 0;
-        mod_data = data;
         
         uiOffset = 0;
         mod_data = (data./(10.^floor(log10(max(data)))));
@@ -144,7 +165,7 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
             ii = ii + 1;
             graphss(ii) = subplot('Position', [.02, .98-ii*pHeight, .7, pHeight]);
             idcs = gg';
-            idcs = idcs(idcs ~= 0);            
+            idcs = idcs(idcs ~= 0);
             modSet = mod_data(:,idcs);
             plot(tt, modSet);
             legend(names(idcs));
@@ -165,9 +186,6 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
                 'Tag',num2str(ii));
             lb(ii) = uic;
             
-            
-            
-            
             for idx = idcs
                 uiOffset = uiOffset+1;
                 disp_data(uiOffset) = uicontrol(timeGraphs,...
@@ -180,40 +198,5 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
     end
 end
 
-function listBoxSelFcn(varargin)
-    ibox = str2num(varargin{1}.Tag);
-    idcs = lb(ibox).Value.';
-    if(length(idcs)>size(grouping,1))
-        grouping = [grouping;zeros(length(idcs)-size(grouping,1),size(grouping,2))];
-    end
-    grouping(:,ibox)=0;
-    grouping(1:length(idcs),ibox) = idcs;
-    subplot(graphss(ibox));
-    modSet = mod_data(:,idcs);
-    plot(data(:,1)/1e7, modSet);
-    legend(names(idcs));
-    grid on;
-    grid minor;
-    ax = gca;
-    ax.GridAlpha = 0.4;
-    ax.MinorGridAlpha = 0.5;
-    hh(ibox) = line([1,1],[0,max(max(modSet))],'color',[0,.75,0],'LineWidth',2);
-    
-    [plotsPer,nPlots] = size(grouping);
-    nBoxes = sum(sum(grouping ~= 0));
-    boxPos = (linspace(.1,.9,nBoxes));
-    boxPos = boxPos(end:-1:1);
-    for jj = length(dispdata):-1:1
-        delete(dispdata(jj))
-    end
-    uiOffset = 0;
-    for idx = grouping(grouping~=0).'
-        uiOffset = uiOffset+1;
-        dispdata(uiOffset) = uicontrol(timeGraphs,...
-            'Style', 'text',...
-            'Units','normalized',...
-            'Position', [.1 boxPos(uiOffset) .1 .05]);
-    end
-    
-    % Rebuild Grouping
-end
+
+
