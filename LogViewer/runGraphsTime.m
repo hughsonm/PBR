@@ -27,7 +27,7 @@ timeBox = uicontrol(timeGraphs, 'Style', 'text',...
         closestTime = abs(tt - pt(1));
         [timeInt, timeRow] = min(closestTime);
         idcs_to_disp = grouping(grouping~=0);
-        idcs_to_disp = idcs_to_disp(:);
+        idcs_to_disp = idcs_to_disp(:)';
         didx = 1;
         for idx = idcs_to_disp
             label = strcat(names{idx},': ',num2str(data(timeRow,idx)));
