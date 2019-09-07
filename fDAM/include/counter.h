@@ -8,7 +8,8 @@
 #ifndef COUNTER_H_
 #define COUNTER_H_
 
-#define WS_COUNT_PERIOD_MS	20
+#define WS_TX_PERIOD_MS	20
+#define	WS_TICK_FREQ	40000
 
 #include "main.h"
 #include "stm32f4xx_exti.h"

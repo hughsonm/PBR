@@ -169,6 +169,6 @@ extern vec3_t BNO_GetVector(BNO_Vector_t type); //Results need to be divided to 
 
 //Change BNO_Init to select the power and operation mode with an enum
 //Get rid of unneeded functions
-//Write interrupt code, probably don't need, may not be worth it
+
 
 

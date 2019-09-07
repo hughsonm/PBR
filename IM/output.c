@@ -19,7 +19,7 @@ extern	u32	RunTime;
 u8	IMLEDs[2][5]; //0/1 for top/bottom. 0-3 for digits, 4 for RGB
 const u8 DataIDMap[2][4] = 
 {	
-	{ENGINE_SPEED, ACCEL_LAT, THROTTLE_POS, ACCEL_FB},
+	{ENGINE_SPEED, VEHICLE_SPEED, THROTTLE_POS, LAMBDA},
 	{COOLANT_TEMP, OIL_PRESSURE, FUEL_LEVEL, BATT_VOLTAGE},
 	// These bottom four values should not be changed. 
 	// They correspond to the warning lights on the dash

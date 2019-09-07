@@ -26,6 +26,6 @@
 #include "atmega.h"
 
 void button_init(void);
-u8 get_rotary_pos(void);
+uint8_t get_rotary_pos(void);
 
 #endif /* CYCLEBUTTONS_H_ */

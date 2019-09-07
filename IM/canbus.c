@@ -53,7 +53,7 @@ void init_car(void)
 	Car.car_data[LAMBDA].type = SIZE_8;
 	Car.car_data[LAMBDA].arr_idx = 8;
 	Car.car_data[LAMBDA].n_digits = 3;
-	Car.car_data[LAMBDA].decimal = 2;
+	Car.car_data[LAMBDA].decimal = 0;
 	Car.car_data[VEHICLE_SPEED].type = SIZE_8;
 	Car.car_data[VEHICLE_SPEED].arr_idx = 9;
 	Car.car_data[VEHICLE_SPEED].n_digits = 3;
@@ -105,7 +105,8 @@ ISR(CANIT_vect)
 {
 	u16 int_flags;
 	u8	mob_check, old_page = CANPAGE;
-	PINA = 0b00000001;
+	
+	//PINA = 0b00000001;//Toggle a debug LED
 	//canlosstimeout = 0;
 	//writeRXMOB(1,0x1000);
 	//writeTXMOB(0,0x2000,SENDdata);
@@ -322,7 +323,7 @@ void writeRXMOB(u8 mobnum, u32 indentifier, u8 dlc)
 	// expecting 8 bytes
 	CANCDMOB = (MOB_RX_EN<<CONMOB0)|(1<<IDE)|(dlc<<DLC0);
 	CANPAGE = old_page;
-	debug_toggle(1);
+	//debug_toggle(1);
 }
 
 void writeTXMOB(u8 mobnum, u32 indentifier, u8 *data_ptr, u8 data_len)
@@ -357,5 +358,5 @@ void writeTXMOB(u8 mobnum, u32 indentifier, u8 *data_ptr, u8 data_len)
 	// enable for transmission, long ID
 	CANCDMOB = (MOB_TX_EN<<CONMOB0)|(1<<IDE)|(data_len<<DLC0);
 	CANPAGE = old_page;
-	debug_toggle(2);
+	//debug_toggle(2);
 }

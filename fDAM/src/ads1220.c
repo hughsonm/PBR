@@ -5,25 +5,6 @@
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_spi.h"
 
-
-uint8_t	SPI_SendReceiveData(SPI_TypeDef* SPIx, uint8_t data)
-{
-	while((SPIx->SR & SPI_I2S_FLAG_BSY) || (!(SPIx->SR & SPI_I2S_FLAG_TXE)));
-	SPIx->DR = data;
-	while((SPIx->SR & SPI_I2S_FLAG_BSY) || (!(SPIx->SR & SPI_I2S_FLAG_RXNE)));
-	return(SPIx->DR);
-}
-
-void SPI_SendBuffer(SPI_TypeDef* SPIx, uint8_t *ptr, uint8_t length)
-{
-
-	for(uint8_t ii = 0;ii<length;ii++)
-	{
-		while((SPIx->SR & SPI_I2S_FLAG_BSY) || (!(SPIx->SR & SPI_I2S_FLAG_TXE)));
-		SPIx->DR = ptr[ii];
-	}
-}
-
 void ADS_InitHW(void)
 {
 	SPI_InitTypeDef 	SPI_InitStruct;
@@ -80,7 +61,11 @@ void ADS_InitHW(void)
 	// enable peripheral clock
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
 
-	/* configure SPI2 in Mode 0
+
+	// From the ADS1120 datasheet:
+	// " Only SPI mode 1 (CPOL = 0, CPHA = 1) is supported"
+
+	/* configure SPI2 in Mode 1
 	 * CPOL = 0 --> clock is low when idle
 	 * CPHA = 1 --> data is sampled at the second edge
 	 * In this case, the second edge is the falling edge.
@@ -106,26 +91,48 @@ uint8_t SPI_ADS_Init(void)
 
 	ADS_InitHW();
 	// CS low
+
+	// IMPORTANT NOTICE ABOUT DEBUGGING THIS SPI INTERFACE!
+	// The ADS chip has an SPI timeout feature. If there's no communication for
+	// roughly 14000 clock cycles, the chip will stop communicating.
+	// fmod = 256 kHz from the internal oscillator.
+	// tmod = 3.9 microseconds
+	// timeout kicks in after 13955*tmod or 54.5 milliseconds.
+	// SPI clock is 16MHz, with a prescaler of 32, so 500 MHz.
+	// 54.5 milliseconds gives us room for 27255859 serial clock
+	// ticks before the ADS resets.
+	// That's plenty of time for the processor, but not much time if we stop
+	// it and try to step through this section with the debugger.
+
 	GPIO_ResetBits(PM_ADS_CS1);
 	// Tell the ADS to reset.
 	cmd = SPI_SendReceiveData(SPI2,ADS_RST);
-	for(uint32_t ii = 0;ii<20;ii++); // Delay so reset can sink in.
+	GPIO_SetBits(PM_ADS_CS1);
+	// From the datasheet:
+	// Wait at least (50 µs + 32 · t (CLK) )
+	// tclk = 16/fmod = 16/256k = 62.5 us.
+	// Wait at least (50 us + 32*62.5 us) = 2.05 ms. MILLISECONDS!!!
+	// Suppose a for-loop delay operates at 16MHz, to be safe.
+	// 2.05ms/(1/16000000) = 32800 clock ticks of delay.
+	for(uint32_t ii = 0;ii<32800;ii++); // Delay so reset can sink in.
 	// Tell it we're going to write 4 contiguous registers, starting at CFG0
 	// This sequence taken from the datasheet for the ADS1220
-	SPI_SendReceiveData(SPI2, 0x43);
-	SPI_SendReceiveData(SPI2, 0x08);
-	SPI_SendReceiveData(SPI2, 0x04);
-	SPI_SendReceiveData(SPI2, 0x10);
+	GPIO_ResetBits(PM_ADS_CS1);
+	SPI_SendReceiveData(SPI2, ADS_WREG(ADS_REG_CFG0,4));//SPI_SendReceiveData(SPI2, 0x43);
+	SPI_SendReceiveData(SPI2, 4<<ADS_CFG0_GAIN);
+	SPI_SendReceiveData(SPI2, 1<<ADS_CFG1_CM);
+	SPI_SendReceiveData(SPI2, 0b10<<ADS_CFG2_5060);
 	SPI_SendReceiveData(SPI2, 0x00);
-	SPI_SendReceiveData(SPI2, 0x23);
+
+	SPI_SendReceiveData(SPI2, ADS_RREG(ADS_REG_CFG0,4));
 	cmd = SPI_SendReceiveData(SPI2, 0x00);
-	if(cmd != 0x08) it_worked = 0;
+	if(cmd != (4<<ADS_CFG0_GAIN)) it_worked = 0;
 	cmd = SPI_SendReceiveData(SPI2, 0x00);
-	if(cmd != 0x08) it_worked = 0;
+	if(cmd != (1<<ADS_CFG1_CM)) it_worked = 0;
 	cmd = SPI_SendReceiveData(SPI2, 0x00);
-	if(cmd != 0x08) it_worked = 0;
+	if(cmd != (0b10<<ADS_CFG2_5060)) it_worked = 0;
 	cmd = SPI_SendReceiveData(SPI2, 0x00);
-	if(cmd != 0x08) it_worked = 0;
+	if(cmd != 0x00) it_worked = 0;
 	// Tell the ADS to start converting
 	SPI_SendReceiveData(SPI2,ADS_STSYNC);
 	// CS high

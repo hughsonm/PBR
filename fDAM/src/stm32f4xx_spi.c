@@ -1300,6 +1300,27 @@ void SPI_I2S_ClearITPendingBit(SPI_TypeDef* SPIx, uint8_t SPI_I2S_IT)
   SPIx->SR = (uint16_t)~itpos;
 }
 
+
+uint8_t	SPI_SendReceiveData(SPI_TypeDef* SPIx, uint8_t data)
+{
+	while((SPIx->SR & SPI_I2S_FLAG_BSY) || (!(SPIx->SR & SPI_I2S_FLAG_TXE)));
+	SPIx->DR = data;
+	while((SPIx->SR & SPI_I2S_FLAG_BSY) || (!(SPIx->SR & SPI_I2S_FLAG_RXNE)));
+	return(SPIx->DR);
+}
+
+void SPI_SendBuffer(SPI_TypeDef* SPIx, uint8_t *ptr, uint8_t length)
+{
+
+	for(uint8_t ii = 0;ii<length;ii++)
+	{
+		while((SPIx->SR & SPI_I2S_FLAG_BSY) || (!(SPIx->SR & SPI_I2S_FLAG_TXE)));
+		SPIx->DR = ptr[ii];
+	}
+}
+
+
+
 /**
   * @}
   */

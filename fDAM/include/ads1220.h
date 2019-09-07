@@ -22,7 +22,7 @@
 #define ADS_CFG0_BYP	0
 
 // CFG1 Bit Definitions
-#define ADS_CFG1_DR		6
+#define ADS_CFG1_DR		5
 #define ADS_CFG1_MODE	3
 #define ADS_CFG1_CM		2
 #define ADS_CFG1_TS		1
@@ -51,7 +51,7 @@
 uint8_t SPI_ADS_Init(void);
 void ADS_InitHW(void);
 
-uint8_t	SPI_SendReceiveData(SPI_TypeDef* SPIx, uint8_t data);
+
 
 
 /*

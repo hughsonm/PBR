@@ -536,6 +536,9 @@ void SPI_I2S_ClearITPendingBit(SPI_TypeDef* SPIx, uint8_t SPI_I2S_IT);
 }
 #endif
 
+uint8_t	SPI_SendReceiveData(SPI_TypeDef* SPIx, uint8_t data);
+void SPI_SendBuffer(SPI_TypeDef* SPIx, uint8_t *ptr, uint8_t length);
+
 #endif /*__STM32F4xx_SPI_H */
 
 /**

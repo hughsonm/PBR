@@ -46,6 +46,8 @@
 #define	ID_ACCEL	0x5002
 #define	ID_GYRO		0x5003
 #define	ID_MISC		0x5004
+#define ID_GPSLAT	0x5005
+#define ID_GPSLON	0x5006
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void TimingDelay_Decrement(void);

@@ -21,7 +21,8 @@
 #include "ads1220.h"
 #include "adc.h"
 #include "counter.h"
-
+#include "gps.h"
+#include "sd.h"
 /* Kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -53,9 +54,12 @@
 //__IO uint32_t ret = 0; /* for return of the interrupt handling */
 extern uint8_t		BNODoneReading;
 extern bnoData_t	BNOData;
-extern uint16_t		WheelCount[2];
-
-
+//extern uint16_t		WheelCount[2];
+extern uint32_t		PulsePeriods[2];
+extern uint8_t		WheelsAreSpinning;
+extern gpsData_t	GPSData;
+extern uint8_t 		GPSRxString[100];
+extern uint8_t		GPSRxStringReady;
 /* Private function prototypes -----------------------------------------------*/
 static void NVIC_Config(void);
 static void CAN_Config(CanTxMsg* TxMessage,uint32_t CAN_ID, uint8_t CAN_DLC);
@@ -74,6 +78,7 @@ void LOGGING(void*);
 void ANALOGIN(void*);
 void COUNTERS(void*);
 void ADCBYSPI(void*);
+void GPS(void*);
 
 void initHW();
 
@@ -83,10 +88,12 @@ xQueueHandle irDataQueue;
 
 xQueueHandle wheelDataQueue;
 
+xQueueHandle gpsDataQueue;
+
 int main(void)
 {
 
-  RCC_ClocksTypeeDef Clocks;
+  RCC_ClocksTypeDef Clocks;
   RCC_GetClocksFreq(&Clocks);
 
   //Initialize GPIO
@@ -96,9 +103,7 @@ int main(void)
   volatile uint32_t count;
   count = 0;
   while(count<STARTUP_PAUSE_US){count++;}
-  BNO_Init(Normal,NDOF);
-  SPI_ADS_Init();
-
+//  SPI_ADS_Init();
   //TODO: Initialize Data Logging
 
 
@@ -114,52 +119,53 @@ int main(void)
   IWDG_ReloadCounter();
 
   // Enable IWDG (the LSI oscillator will be enabled by hardware)
-  IWDG_Enable();
+  //IWDG_Enable();
 
   //Create IPC Variables
   bnoDataQueue = xQueueCreate(10, sizeof(bnoData_t));
   irDataQueue = xQueueCreate(10,sizeof(uint16_t));
   wheelDataQueue = xQueueCreate(10, sizeof(uint32_t));
+  gpsDataQueue = xQueueCreate(10,sizeof(gpsData_t));
   //Create tasks
 
   /*
    * CAN Task:
    * Periodically send out data on the CAN bus.
    */
-  xTaskCreate(
-      CAN,                 				/* Function pointer */
-      "Task1",                          /* Task name - for debugging only*/
-      configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-      (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-      tskIDLE_PRIORITY + 1UL,           /* Task priority*/
-      NULL                              /* Task handle */
-  );
+//  xTaskCreate(
+//      CAN,                 				/* Function pointer */
+//      "Task1",                          /* Task name - for debugging only*/
+//      configMINIMAL_STACK_SIZE*2,         /* Stack depth in words */
+//      (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//      tskIDLE_PRIORITY + 1UL,           /* Task priority*/
+//      NULL                              /* Task handle */
+//  );
   /*
    * BNO055 Task:
    * Periodically query the accelerometer via I2C.
    */
-  xTaskCreate(
-      BNO055,                 			/* Function pointer */
-      "Task2",                          /* Task name - for debugging only*/
-      configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-      (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-      tskIDLE_PRIORITY + 1UL,           /* Task priority*/
-      NULL                              /* Task handle */
-  );
+//  xTaskCreate(
+//      BNO055,                 			/* Function pointer */
+//      "Task2",                          /* Task name - for debugging only*/
+//      configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+//      (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//      tskIDLE_PRIORITY + 1UL,           /* Task priority*/
+//      NULL                              /* Task handle */
+//  );
 
   /*
    * LOGGING Task:
    * Periodically take a snapshot of current fDAM data
    * and log to an SD card via SDIO
    */
-  xTaskCreate(
-        LOGGING,						  /* Function pointer */
-        "Task3",                          /* Task name - for debugging only*/
-        configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-        (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-        tskIDLE_PRIORITY + 4UL,           /* Task priority*/
-        NULL                              /* Task handle */
-    );
+//  xTaskCreate(
+//        LOGGING,						  /* Function pointer */
+//        "Task3",                          /* Task name - for debugging only*/
+//        1024					,         /* Stack depth in words */
+//        (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+//        tskIDLE_PRIORITY + 4UL,           /* Task priority*/
+//        NULL                              /* Task handle */
+//    );
 
   /*
    * ANALOGIN Task:
@@ -178,14 +184,14 @@ int main(void)
    * ADCBYSPI Task:
    * Periodically use SPI to read the external ADC's
    */
-  //xTaskCreate(
-  //      ADCBYSPI,       		          /* Function pointer */
-  //      "Task5",                          /* Task name - for debugging only*/
-  //      configMINIMAL_STACK_SIZE,         /* Stack depth in words */
-  //      (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
-  //      tskIDLE_PRIORITY + 2UL,           /* Task priority*/
-  //      NULL                              /* Task handle */
-  //  );
+  xTaskCreate(
+        ADCBYSPI,       		          /* Function pointer */
+        "Task5",                          /* Task name - for debugging only*/
+        configMINIMAL_STACK_SIZE,         /* Stack depth in words */
+        (void*) NULL,                     /* Pointer to tasks arguments (parameter) */
+        tskIDLE_PRIORITY + 2UL,           /* Task priority*/
+        NULL                              /* Task handle */
+    );
   /*
    * COUNTERS Task:
    * At regular time interval, check the external counters,
@@ -200,6 +206,15 @@ int main(void)
 	  tskIDLE_PRIORITY + 4UL,           /* Task priority*/
 	  NULL                              /* Task handle */
     );
+
+  xTaskCreate(
+  	  GPS,
+	  "Task6",
+	  configMINIMAL_STACK_SIZE,
+	  (void*) NULL,
+	  tskIDLE_PRIORITY + 1UL,
+	  NULL
+  );
 
   if (bnoDataQueue == 0 || irDataQueue == 0 || wheelDataQueue == 0) {
     while(1);
@@ -218,9 +233,10 @@ void CAN(void *pvParameters){
   uint16_t	wheelUnpackedRecv[2];
   uint16_t	irDataRecv;
   uint8_t	irUnpackedRecv[2];
+  gpsData_t	gpsDataRecv;
   uint8_t	didSendSomething=0;
   portBASE_TYPE status;
-  CanTxMsg LinAccelTx, EulerTx, AccelTx, GyroTx, MiscTx;
+  CanTxMsg LinAccelTx, EulerTx, AccelTx, GyroTx, MiscTx, GPSLatTx,GPSLonTx;
   TickType_t xLastWakeTime;
   xLastWakeTime = xTaskGetTickCount();
   const TickType_t xPeriod = CAN_TX_PERIOD_MS;
@@ -232,6 +248,8 @@ void CAN(void *pvParameters){
   CAN_Config(&AccelTx,		ID_ACCEL,		6);
   CAN_Config(&GyroTx,		ID_GYRO,		6);
   CAN_Config(&MiscTx,		ID_MISC,		8);
+  CAN_Config(&GPSLatTx,		ID_GPSLAT,		8);
+  CAN_Config(&GPSLonTx,		ID_GPSLON,		8);
 
   while (1) {
 	  didSendSomething = 0;
@@ -310,6 +328,31 @@ void CAN(void *pvParameters){
     	  didSendSomething = 1;
       }
 
+      status = xQueueReceive(gpsDataQueue,&gpsDataRecv,0);
+      if(pdTRUE == status)
+      {
+    	  GPSLatTx.Data[0] = (uint8_t)(gpsDataRecv.latitude[0]>>8);
+    	  GPSLatTx.Data[1] = (uint8_t)(gpsDataRecv.latitude[0]);
+    	  GPSLatTx.Data[2] = (uint8_t)(gpsDataRecv.latitude[1]>>8);
+		  GPSLatTx.Data[3] = (uint8_t)(gpsDataRecv.latitude[1]);
+		  GPSLatTx.Data[4] = (uint8_t)(gpsDataRecv.latitude[2]>>8);
+		  GPSLatTx.Data[5] = (uint8_t)(gpsDataRecv.latitude[2]);
+		  GPSLatTx.Data[6] = (uint8_t)(gpsDataRecv.latitude[3]>>8);
+		  GPSLatTx.Data[7] = (uint8_t)(gpsDataRecv.latitude[3]);
+
+		  GPSLonTx.Data[0] = (uint8_t)(gpsDataRecv.longitude[0]>>8);
+		  GPSLonTx.Data[1] = (uint8_t)(gpsDataRecv.longitude[0]);
+		  GPSLonTx.Data[2] = (uint8_t)(gpsDataRecv.longitude[1]>>8);
+		  GPSLonTx.Data[3] = (uint8_t)(gpsDataRecv.longitude[1]);
+		  GPSLonTx.Data[4] = (uint8_t)(gpsDataRecv.longitude[2]>>8);
+		  GPSLonTx.Data[5] = (uint8_t)(gpsDataRecv.longitude[2]);
+		  GPSLonTx.Data[6] = (uint8_t)(gpsDataRecv.longitude[3]>>8);
+		  GPSLonTx.Data[7] = (uint8_t)(gpsDataRecv.longitude[3]);
+		  while(CAN_TxStatus_NoMailBox == CAN_Transmit(CANx, &GPSLatTx));
+		  while(CAN_TxStatus_NoMailBox == CAN_Transmit(CANx, &GPSLonTx));
+		  didSendSomething = 1;
+      }
+
       if(didSendSomething) GPIO_ToggleBits(PM_LED_CAN);
       vTaskDelayUntil(&xLastWakeTime, xPeriod/portTICK_RATE_MS);
   }
@@ -320,6 +363,7 @@ void BNO055(void *pvParameters){
 	TickType_t xLastWakeTime;
 	xLastWakeTime = xTaskGetTickCount();
 	const TickType_t xPeriod = CAN_TX_PERIOD_MS;
+	BNO_Init(Normal,NDOF);
 	// Turn the I2C ISR BNO read state machine on
 	I2C_ITConfig(I2C1,I2C_IT_EVT|I2C_IT_BUF,ENABLE);
 	while (1) {
@@ -354,11 +398,6 @@ void ADCBYSPI(void *pvParameters)
 
 	success = SPI_ADS_Init();
 
-	//while(success != 5)
-	//{
-	//	SPI_ADS_Init();
-	//}
-
 
 	while(1)
 	{
@@ -379,14 +418,23 @@ void ADCBYSPI(void *pvParameters)
 
 void LOGGING(void *pvParameters){
 
+	int16_t result;
+	char log_buffer[1024] = {4,5,6,7,8,9,10,11,12,13,14,15};
+
 	//Initialize the data logging stuff
 
+	// SD card is hooked up to pins PA3 to PA7(cd,nss,ck,miso,mosi)
+	// Set up SPI on those pins. It's SPI1.
+	// Gonna need some heavy state machine stuff to control the talking to the sd card.
+	SD_InitHW();
+	result = SD_InitCard();
 	while(1){
 		// Get the current time
-
+		if(!result)	result = SD_DiskRead(log_buffer,0,2);
+		if(!result) result = SD_DiskWrite(log_buffer,0,1);
+		if(!result) result = SD_DiskRead(log_buffer, 0, 2);
 		// Log a selection of data to the SD card
-		// via the SDIO functions
-		vTaskDelay(100 / portTICK_RATE_MS);
+		vTaskDelay(10000 / portTICK_RATE_MS);
 	}
 
 }
@@ -414,23 +462,54 @@ void ANALOGIN(void *pvParameters){
 }
 
 
+void GPS(void * pvParameters){
+	TickType_t xLastWakeTime;
+	xLastWakeTime = xTaskGetTickCount();
+	UART_GPS_Init();
+	while(1)
+	{
+		// Has a fresh pack of GPS data arrived?
+		// If yes, queue it for CAN transmission
 
+		if(GPSRxStringReady)
+		{
+			// Send it.
+			GPS_ParseRMCString(GPSRxString,&GPSData);
+			GPSRxStringReady = 0;
+			xQueueSendToBack(gpsDataQueue, &GPSData,0);
+		}
+
+		vTaskDelayUntil(&xLastWakeTime, 80/portTICK_RATE_MS);
+	}
+}
 
 void COUNTERS(void *pvParameters){
 
 	TickType_t xLastWakeTime;
 	xLastWakeTime = xTaskGetTickCount();
-	const TickType_t xPeriod = WS_COUNT_PERIOD_MS;
+	const TickType_t xPeriod = WS_TX_PERIOD_MS;
 	uint16_t	wheel_freq[2];
+	uint32_t	pulse_prd_capture;
 	uint32_t	wheel_packed;
 
 	Counter_Init();
 	while(1)
 	{
 
-		wheel_freq[0] = (((uint16_t)WheelCount[0])*1000)/WS_COUNT_PERIOD_MS;
-		wheel_freq[1] = (((uint16_t)WheelCount[1])*1000)/WS_COUNT_PERIOD_MS;
-		WheelCount[0] = 0; WheelCount[1] = 0;
+		//wheel_freq[0] = (((uint16_t)WheelCount[0])*1000)/WS_COUNT_PERIOD_MS;
+		//wheel_freq[1] = (((uint16_t)WheelCount[1])*1000)/WS_COUNT_PERIOD_MS;
+		if(WheelsAreSpinning)
+		{
+			pulse_prd_capture = PulsePeriods[0];
+			if(pulse_prd_capture) wheel_freq[0] = (uint16_t)(WS_TICK_FREQ/pulse_prd_capture);
+			pulse_prd_capture = PulsePeriods[1];
+			if(pulse_prd_capture) wheel_freq[1] = (uint16_t)(WS_TICK_FREQ/pulse_prd_capture);
+		}
+		else
+		{
+			wheel_freq[0] = 0;
+			wheel_freq[1] = 0;
+		}
 		wheel_packed = Counter_PackFreqs(wheel_freq);
 		xQueueSendToBack(wheelDataQueue, &wheel_packed, 0);
 		vTaskDelayUntil(&xLastWakeTime, xPeriod/portTICK_RATE_MS);
@@ -481,6 +560,10 @@ static void NVIC_Config(void)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
+//	NVIC_Init(&NVIC_InitStructure);
+
+//	NVIC_InitStructure.NVIC_IRQChannel = UART4_IRQn;
+//	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
 
 }
 

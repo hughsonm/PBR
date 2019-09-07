@@ -2,7 +2,7 @@
  * types.h
  *
  * Created: 2016-02-17 3:35:17 PM
- *  Author: Max H
+ *  Author: Max
  * Type definitions
  */ 
 

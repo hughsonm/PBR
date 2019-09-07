@@ -4,14 +4,14 @@
  * Created: 2014-03-08 23:42:20
  *  Author: Brandon Hill
  */ 
-
+#ifndef OUTPUT_H_
+#define OUTPUT_H_
 #include "atmega.h"
 #include "as1107.h"
 //#include "gear.h"
 #include "types.h"
 
-#ifndef OUTPUT_H_
-#define OUTPUT_H_
+
 
 
 /*
@@ -33,7 +33,7 @@
 #define DMODE_ACC	2
 #define DMODE_LEVEL	3
 
-#define MAX_DISP_LEN	30
+#define MAX_DISP_LEN	100
 #define RPM_UP_LVL		5
 
 #define RPM_LEFT	0x04

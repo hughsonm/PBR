@@ -1,4 +1,6 @@
 #include <BNO055.h>
+#include "main.h"
+#include "misc.h"
 #include "stm32f4xx_i2c.h"
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx_gpio.h"
@@ -160,7 +162,7 @@ void I2C_BNO_Init(void)
   //Set up Init Structs for I2C and I2C Pins
   I2C_InitTypeDef I2C_InitStruct;
   GPIO_InitTypeDef I2C_GPIO_InitStruct;
-
+  NVIC_InitTypeDef	NVIC_InitStructure;
   //Remap I2C pins to PB8 and PB9
   //RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
   //GPIO_PinRemapConfig(GPIO_Remap_I2C1,ENABLE);
@@ -195,6 +197,11 @@ void I2C_BNO_Init(void)
   I2C_InitStruct.I2C_AcknowledgedAddress =  I2C_AcknowledgedAddress_7bit;
 
   I2C_Init(I2C1, &I2C_InitStruct);
+  NVIC_InitStructure.NVIC_IRQChannel = I2C1_EV_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
 }
 
 void BNO_Append(BNO_datum_t **head,uint8_t addr, uint8_t len, uint8_t *dest)

@@ -155,8 +155,7 @@ void calc_MatrixLED(void)
 	switch (Dashboard.disp_mode)
 	{
 	case DMODE_STR:
-		sprintf(msg," PBR17/18 ");
-		length = 10;
+		length = (uint8_t)sprintf(msg," PBR18 ");
 		break;
 	case DMODE_ACC:
 		/*sprintf(msg," U A LIL BITCH ");
@@ -164,8 +163,7 @@ void calc_MatrixLED(void)
 		break;
 		*/
 	case DMODE_LEVEL:
-		sprintf(msg," AND I LOVE YOU! ");
-		length = 17;
+		length = sprintf(msg," Sam was faster ");
 		break;
 	}
 	
@@ -224,7 +222,8 @@ void calc_MatrixLED(void)
 				DashMat[rr] = 0x01<<cursor[0];
 			}
 		}
-		break;		
+		break;	
+	case DMODE_LEVEL:	
 	case DMODE_STR:		
 		if (RunTime - end_time > REFRESH_SCREEN && (letter_pos < length))
 		{
