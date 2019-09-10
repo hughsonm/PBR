@@ -119,9 +119,11 @@ function draggingFcn(...
 	set(figstruct.ParentFigure, 'keypressfcn', {@keyPressFcn,figstruct});
     linkaxes(figstruct.subgraphs, 'x');
 end
-function stopDragFcn(parent)
+function stopDragFcn(...
+    src,code,...
+    figstruct)
     % Once the mouse button gets released, stop following the pointer.
-    set(parent, 'WindowButtonMotionFcn', '')
+    set(figstruct.ParentFigure, 'WindowButtonMotionFcn', '')
 end
 
 
