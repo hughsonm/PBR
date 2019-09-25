@@ -1,0 +1,13 @@
+CAM_SyncAdjustment
+CAM_0Duration
+CAM_0_BaseTiming [deg]
+CAM_0_Timing [deg]
+CAM_0_SyncError0
+CAM_0_SyncError1
+CAM_0_SyncError2
+CAM_0_SyncError3
+CRANK_Angle [deg]
+CRANK_EdgeDiff [ms]
+CRANK_TimingError0
+CRANK_TimingError1
+CRANK_Duration

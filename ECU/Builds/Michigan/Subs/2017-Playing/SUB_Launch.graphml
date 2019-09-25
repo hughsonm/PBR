@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xmlns:yed="http://www.yworks.com/xml/yed/3" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd">
+  <!-- Created by EngineLab ConfigurationGrapher -->
+  <key for="graphml" id="d0" yfiles.type="resources"/>
+  <key for="port" id="d1" yfiles.type="portgraphics"/>
+  <key for="port" id="d2" yfiles.type="portgeometry"/>
+  <key for="port" id="d3" yfiles.type="portuserdata"/>
+  <key attr.name="url" attr.type="string" for="node" id="d4"/>
+  <key attr.name="description" attr.type="string" for="node" id="d5"/>
+  <key for="node" id="d6" yfiles.type="nodegraphics"/>
+  <key attr.name="Description" attr.type="string" for="graph" id="d7">
+    <default/>
+  </key>
+  <key attr.name="url" attr.type="string" for="edge" id="d8"/>
+  <key attr.name="description" attr.type="string" for="edge" id="d9"/>
+  <key for="edge" id="d10" yfiles.type="edgegraphics"/>
+  <graph edgedefault="directed" id="G">
+    <node id="n0">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="37.5" width="117" x="0" y="0"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="34" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="150" x="5.0" y="2.57373046875">0000 :: Math Calculation
+Launch_ActLaunchState
+i0</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n1">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="125" width="130.5" x="1" y="1"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="153" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="168" x="5.0" y="2.57373046875">0001 :: 1-Axis Lookup Table
+Launch_DownRPMs
+channel: 0001
+name: Launch_DownRPMs
+inputs: [FFFE]
+x-axis: [2, 3, 4, 5, 6]
+interpolation: 1
+width: 5
+min: 6000
+max: 9000</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n2">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="37.5" width="220.5" x="2" y="2"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="34" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="288" x="5.0" y="2.57373046875">0002 :: Math Calculation
+Launch_OverRPM
+(i1&gt;i0)&amp;&amp;(i2&gt;0)&amp;&amp;(i2&lt;6)</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n3">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="112.5" width="126" x="3" y="3"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="136" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="162" x="5.0" y="2.57373046875">0003 :: No Operation
+Launch_ReqDelay [ms]
+channel: 0003
+name: Launch_ReqDelay [ms]
+inputs: No inputs
+initial_value: 6000
+clamp_lower: 0
+clamp_upper: 0
+output_value: 6000</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n4">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="25" width="90" x="4" y="4"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="17" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="114" x="5.0" y="2.57373046875">0004 :: Timer
+Launch_ReqDownshift</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n5">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="112.5" width="130.5" x="5" y="5"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="136" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="168" x="5.0" y="2.57373046875">0005 :: No Operation
+Launch_ReqLaunchState
+channel: 0005
+name: Launch_ReqLaunchState
+inputs: No inputs
+initial_value: 0
+clamp_lower: 0
+clamp_upper: 0
+output_value: 0</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n6">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="25" width="81" x="6" y="6"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="17" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="102" x="5.0" y="2.57373046875">0006 :: Timer
+Launch_ReqUpshift</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n7">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="112.5" width="130.5" x="7" y="7"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="136" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="168" x="5.0" y="2.57373046875">0007 :: No Operation
+Launch_RevLimit [RPM]
+channel: 0007
+name: Launch_RevLimit [RPM]
+inputs: No inputs
+initial_value: 8000
+clamp_lower: 0
+clamp_upper: 0
+output_value: 8000</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n8">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="37.5" width="135" x="8" y="8"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="34" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="174" x="5.0" y="2.57373046875">0008 :: Math Calculation
+Launch_UnderRPM
+(i1&lt;i0)&amp;&amp;(i2&gt;1)</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n9">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="125" width="130.5" x="9" y="9"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="153" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="168" x="5.0" y="2.57373046875">0009 :: 1-Axis Lookup Table
+Launch_UpRPMs
+channel: 0009
+name: Launch_UpRPMs
+inputs: [FFFE]
+x-axis: [1, 2, 3, 4, 5]
+interpolation: 0
+width: 5
+min: 11000
+max: 12000</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n10">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="25" width="99" x="10" y="10"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="17" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="126" x="5.0" y="2.57373046875">F089 :: Predefined
+EAL_EngineSpeed [RPM]</y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <node id="n11">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="25" width="90" x="0" y="0"/>
+          <y:Fill color="#CC6600" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" borderDistance="0.0" fontFamily="dialog" fontSize="8" fontStyle="plain" hasBackgroundColor="false" backgroundColor="#000000" hasLineColor="false" height="17" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="114" x="5.0" y="2.57373046875">E000 :: Unresolved
+GearPosition</y:NodeLabel>
+          <y:Shape type="roundrectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+
+    <edge id="e0" source="n5" target="n0">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i0</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e1" source="n11" target="n1">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#FF0000" type="dashed" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i0</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e2" source="n9" target="n2">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i0</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e3" source="n10" target="n2">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i1</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e4" source="n11" target="n2">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#FF0000" type="dashed" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i2</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e5" source="n8" target="n4">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i0</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e6" source="n3" target="n4">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i1</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e7" source="n4" target="n4">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i2</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e8" source="n2" target="n6">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i0</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e9" source="n3" target="n6">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i1</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e10" source="n6" target="n6">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i2</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e11" source="n1" target="n8">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i0</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e12" source="n10" target="n8">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#000000" type="line" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i1</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e13" source="n11" target="n8">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#FF0000" type="dashed" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i2</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e14" source="n11" target="n9">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:LineStyle color="#FF0000" type="dashed" width="1"/>
+          <y:Arrows source="t_shape" target="short"/>
+          <y:EdgeLabel alignment="center" distance="0.5" fontFamily="dialog" fontSize="8" fontStyle="italic" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" modelName="six_pos" modelPosition="ttail" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="13.33984375" x="42.36135583302337" y="17.0">i0</y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+  </graph>
+  <data key="d0">
+    <y:Resources/>
+  </data>
+</graphml>
