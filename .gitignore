@@ -1,3 +1,5 @@
 .DS_Store
 DASH/arduimu*
 *.graphml
+ECU/Layouts
+ECU/Logs
